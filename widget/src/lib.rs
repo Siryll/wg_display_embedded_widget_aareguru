@@ -1,3 +1,4 @@
+// From the aareguru widget from @eliabieri (https://github.com/eliabieri/wg_display_widget_aareguru/blob/main/widget/src/lib.rs)
 use schemars::{schema_for, JsonSchema};
 use serde::Deserialize;
 use serde_json::{Error, Value};
@@ -9,7 +10,7 @@ wit_bindgen::generate!({
     world: "widget"
 });
 
-const WIDGET_NAME: &str = "ESP32 Widget Template";
+const WIDGET_NAME: &str = "Aareguru";
 
 #[derive(JsonSchema, Deserialize)]
 struct WidgetConfig {
@@ -24,13 +25,9 @@ impl Guest for MyWidget {
     }
 
     fn run(context: WidgetContext) -> WidgetResult {
-        // Widgets can log to the console
-        logging::log(logging::Level::Info, WIDGET_NAME, "Widget run started");
-
-        // Widgets can handle the case where no config is provided
         if "{}" == context.config {
             return WidgetResult {
-                data: "No config provided".into(),
+                data: "You must configure a city".into(),
             };
         }
 
@@ -62,7 +59,10 @@ impl Guest for MyWidget {
 
         let data: Result<Value, Error> = serde_json::from_slice(response.bytes.as_slice());
         let result = match data {
-            Ok(data) => format!("Aare Temperature in {}: {} C", config.city, data["aare"]),
+            Ok(data) => format!(
+                "{}: {}°C ({})",
+                config.city, data["aare"], data["text_short"]
+            ),
             Err(_) => "Response from AareGuru could not be parsed".into(),
         };
 
@@ -75,11 +75,11 @@ impl Guest for MyWidget {
     }
 
     fn get_version() -> String {
-        "0.1.0-interface-test".into()
+        "1.0.0".into()
     }
 
     fn get_run_update_cycle_seconds() -> u32 {
-        10
+        300
     }
 }
 
