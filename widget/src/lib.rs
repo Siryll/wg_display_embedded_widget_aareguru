@@ -27,8 +27,11 @@ impl Guest for MyWidget {
         }
 
         // Widgets can parse their config with ease using serde
-        let config: WidgetConfig =
-            serde_json::from_str(&context.config).expect("Failed to parse config");
+        let Ok(config) = serde_json::from_str::<WidgetConfig>(&context.config) else {
+            return WidgetResult {
+                data: "Invalid config".into(),
+            };
+        };
 
         // Widgets can make network requests
         let response = http::request(
