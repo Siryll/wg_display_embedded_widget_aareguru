@@ -15,4 +15,4 @@ jobs:
     steps:
     - uses: actions/checkout@v4
     # The version after @ is the firmware release this widget is built for, see the precompiler README.
-    - uses: Siryll/wg_display_embedded_precompiler@v0.1.0
+    - uses: Siryll/wg_display_embedded_precompiler@v0.0.1-test
